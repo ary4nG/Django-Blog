@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Environment
+.env
+__pycache__
+*.pyc
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Virtual Environment
+venv
+env
+
+# Database
+*.sqlite3
+
+# Documentation
+README.md

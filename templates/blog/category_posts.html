@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }} - Django Blog{% endblock %}
+
+{% block content %}
+<h1>Posts in "{{ category.name }}"</h1>
+{% if category.description %}
+<p class="lead">{{ category.description }}</p>
+{% endif %}
+
+{% for post in page_obj %}
+<div class="card mb-4">
+    <div class="card-body">
+        <h3 class="card-title">
+            <a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>
+        </h3>
+        <p class="post-meta">
+            By {{ post.author.username }} on {{ post.created_at|date:"F d, Y" }}
+        </p>
+        <p class="card-text">{{ post.excerpt|default:post.content|truncatewords:30 }}</p>
+        <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn-primary">Read More</a>
+    </div>
+</div>
+{% empty %}
+<p>No posts in this category yet.</p>
+{% endfor %}
+
+<!-- Pagination (same as home.html) -->
+{% if page_obj.has_other_pages %}
+<nav aria-label="Blog pagination">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        </li>
+        {% endif %}
+        
+        {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active">
+            <span class="page-link">{{ num }}</span>
+        </li>
+        {% else %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+        </li>
+        {% endif %}
+        {% endfor %}
+        
+        {% if page_obj.has_next %}
+        <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}

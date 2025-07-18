@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} - Django Blog{% endblock %}
+
+{% block content %}
+<article>
+    <h1>{{ post.title }}</h1>
+    <p class="post-meta">
+        By {{ post.author.username }} on {{ post.published_at|date:"F d, Y" }}
+        in <a href="{% url 'blog:category_posts' post.category.slug %}">{{ post.category.name }}</a>
+    </p>
+    
+    {% if post.tags.all %}
+    <p class="mb-3">
+        <strong>Tags:</strong>
+        {% for tag in post.tags.all %}
+        <a href="{% url 'blog:tag_posts' tag.slug %}" class="badge bg-secondary text-decoration-none">{{ tag.name }}</a>
+        {% endfor %}
+    </p>
+    {% endif %}
+    
+    <div class="post-content">
+        {{ post.content|linebreaks }}
+    </div>
+</article>
+
+<!-- Comments section -->
+<div class="mt-5">
+    <h3>Comments ({{ comments.count }})</h3>
+    {% for comment in comments %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h6 class="card-title">{{ comment.author.username }}</h6>
+            <p class="card-text">{{ comment.content|linebreaks }}</p>
+            <small class="text-muted">{{ comment.created_at|date:"F d, Y g:i A" }}</small>
+        </div>
+    </div>
+    {% empty %}
+    <p>No comments yet.</p>
+    {% endfor %}
+</div>
+
+<!-- Related posts -->
+{% if related_posts %}
+<div class="mt-5">
+    <h3>Related Posts</h3>
+    <div class="row">
+        {% for related_post in related_posts %}
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        <a href="{% url 'blog:post_detail' related_post.slug %}">{{ related_post.title }}</a>
+                    </h6>
+                    <p class="card-text">{{ related_post.excerpt|default:related_post.content|truncatewords:15 }}</p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

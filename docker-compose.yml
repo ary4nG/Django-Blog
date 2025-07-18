@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # Database service
+  db:
+    image: postgres:16
+    container_name: blog_postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      # Data persistence - database data will survive container restarts
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  # Django web application service
+  web:
+    build: .
+    container_name: blog_django
+    environment:
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+    volumes:
+      # Hot reloading - changes in code will be reflected immediately
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    restart: unless-stopped
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+# Named volumes for data persistence
+volumes:
+  postgres_data:
