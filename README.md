@@ -128,12 +128,6 @@ Set these in your `.env` file:
 
 ---
 
-## License
-
-This project is licensed under the MIT License.
-
----
-
 ## Acknowledgements
 
 - [Django Documentation](https://docs.djangoproject.com/)
@@ -142,4 +136,3 @@ This project is licensed under the MIT License.
 
 ---
 
-**Feel free to fork, contribute, or
